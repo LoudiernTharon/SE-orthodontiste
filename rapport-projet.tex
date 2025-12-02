@@ -1,0 +1,224 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage[style=apa, backend=biber]{biblatex}
+
+\addbibresource{references.bib}
+
+\geometry{hmargin=2.5cm,vmargin=2.5cm}
+
+% Configuration pour le code Lisp
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinelanguage{Lisp}{
+  morekeywords={defun, defparameter, defstruct, let, loop, cond, if, dolist, push, when, unless, setf, format, equal, case, make-regle, make-fait},
+  sensitive=true,
+  morecomment=[l]{;},
+  morestring=[b]",
+}
+
+\lstset{
+    language=Lisp,
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codepurple},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{blue},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\title{
+    \textbf{Conduite d'expertise d'un Système Expert d'Ordre 0+}\\
+    \large Aide à la décision en Orthopédie Dento-Faciale\\
+    \small TP02 - Intelligence Artificielle Symbolique
+}
+\author{Étudiant(e) XYZ \and Étudiant(e) ABC}
+\date{Janvier 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Contexte et Problématique}
+L'Orthopédie Dento-Faciale (ODF), communément appelée orthodontie, est une discipline complexe nécessitant l'intégration de multiples paramètres cliniques (squelettiques, dentaires, esthétiques) pour établir un diagnostic et un plan de traitement. 
+
+La problématique traitée dans ce projet est la création d'un système d'aide à la décision pour la \textbf{sélection du type d'appareil orthodontique} chez l'enfant et l'adulte. Face à la multitude de dispositifs existants (fonctionnels, fixes, aligneurs, etc.), le risque d'erreur de diagnostic ou de mauvaise indication thérapeutique est réel pour un praticien débutant.
+
+\subsection{Justification du Système Expert d'Ordre 0+}
+Le choix d'un système expert d'ordre 0+ (logique propositionnelle étendue aux prédicats simples, sans gestion d'incertitude probabiliste type Bayes) se justifie par la nature des classifications orthodontiques :
+\begin{itemize}
+    \item \textbf{Déterminisme des classifications :} Les classes d'Angle (I, II, III) sont définies par des critères géométriques stricts \parencite{angle1899}.
+    \item \textbf{Protocoles standardisés :} Les recommandations de la Haute Autorité de Santé \parencite{has2002} fournissent des arbres de décision clairs (ex: Si ANB < 0 alors Classe III).
+    \item \textbf{Absence de temps réel :} Le diagnostic se fait sur des données statiques (radiographies, mesures cliniques) à un instant $t$.
+\end{itemize}
+
+Ce système permet donc de formaliser le raisonnement clinique de manière explicite et vérifiable.
+
+\section{Base de Connaissances}
+
+\subsection{Formalisation des Règles}
+La base de connaissances a été construite à partir d'une analyse bibliographique rigoureuse. Elle est divisée en trois modules : Diagnostic, Appareillage, et Contre-indications.
+
+Voici quelques exemples de règles formalisées (SI ... ALORS ...) :
+
+\begin{itemize}
+    \item \textbf{Règle R-A2 (Diagnostic Classe II)} :
+    SI \textit{Relation Molaire} = Classe 2 ET \textit{Incisives Maxillaires} = proclinées ET \textit{Overjet} > 5mm \\
+    ALORS \textit{Diagnostic} = Classe II division 1 \parencite{thiruvenkatachari2017}.
+    
+    \item \textbf{Règle R-B3 (Masque Facial)} :
+    SI \textit{Diagnostic} = Classe III squelettique ET \textit{Âge} entre 6 et 9 ans ET \textit{Rétromaxillie} = Vrai \\
+    ALORS \textit{Appareil} = Masque de Delaire \parencite{owens2024}.
+    
+    \item \textbf{Règle R-C1 (Contre-indication Parodontale)} :
+    SI \textit{Parodontite} = Active OU \textit{Perte d'attache} > 50\% \\
+    ALORS \textit{Traitement} = Contre-indiqué \parencite{proffit2018}.
+\end{itemize}
+
+\subsection{Arbre de Déduction (Simplifié)}
+Le raisonnement suit une logique en cascade :
+\begin{enumerate}
+    \item \textbf{Niveau 1 (Squelettique/Dentaire)} : Analyse des mesures céphalométriques (ANB, Wits) et cliniques $\rightarrow$ \textit{Diagnostic}.
+    \item \textbf{Niveau 2 (Thérapeutique)} : Croisement du \textit{Diagnostic} avec l'\textit{Âge}, la \textit{Coopération} et la \textit{Croissance} $\rightarrow$ \textit{Appareil}.
+    \item \textbf{Niveau 3 (Sécurité)} : Vérification des limites (Parodonte, limites techniques) $\rightarrow$ \textit{Contre-indications} ou \textit{Accessoires}.
+\end{enumerate}
+
+\section{Implémentation en Common Lisp}
+
+\subsection{Représentation des Connaissances}
+Nous avons opté pour l'utilisation de structures (`defstruct`) pour représenter les faits et les règles, offrant une meilleure lisibilité que les listes simples.
+
+\begin{lstlisting}[caption=Structure des données en Lisp]
+(defstruct fait
+  attribut   ; Symbole (ex: 'age)
+  valeur     ; Valeur (ex: 12)
+  source     ; :utilisateur ou :deduit
+)
+
+(defstruct regle
+  id          ; Identifiant
+  premisses   ; Liste ((attribut operateur valeur)...)
+  conclusions ; Liste ((attribut valeur)...)
+  (active t)  ; Gestion de l'activation
+)
+\end{lstlisting}
+
+\subsection{Moteur d'Inférence : Chaînage Avant}
+Le choix s'est porté sur un moteur en **chaînage avant** (dirigé par les données). En diagnostic médical, nous partons des symptômes (faits observés) pour en déduire une pathologie (nouveaux faits). 
+
+Le moteur fonctionne par saturation de la base de faits (`*base-faits*`).
+
+\begin{lstlisting}[caption=Extrait du moteur de saturation]
+(defun chainage-avant ()
+  (loop while nouveau-fait-trouve do
+    (dolist (r *base-regles*)
+      (when (regle-active r)
+        ;; Verification des premisses avec evaluer-condition
+        (if (conditions-ok)
+            (progn
+               (ajouter-nouveaux-faits)
+               (desactiver-regle r)))))))
+\end{lstlisting}
+
+Une particularité de notre implémentation est la fonction `evaluer-condition` qui gère des opérateurs de comparaison complexes (`>`, `<`, `member`, `equal`), dépassant le simple ordre 0 binaire.
+
+\subsection{Fonctions de Service}
+Le système inclut des fonctions robustes pour :
+\begin{itemize}
+    \item `ajouter-fait` : Vérifie l'unicité avant l'insertion.
+    \item `charger-regles` : Initialise la base avec 15 règles métier.
+    \item `reinitialiser-base` : Vide la mémoire de travail pour un nouveau patient.
+\end{itemize}
+
+\section{Utilisation de l'IA Générative}
+
+Conformément aux consignes, l'IA (modèle Gemini) a été utilisée comme "Technicien Lisp" tandis que l'étudiant a agi comme "Expert Orthodontiste".
+
+\subsection{Documentation des Prompts}
+\begin{itemize}
+    \item \textbf{Prompt initial} : Définition du rôle et contrainte "Attends ma base de règles".
+    \item \textbf{Apport de l'IA} : 
+        \begin{itemize}
+            \item Structuration du code Lisp (séparation Modèle / Vue / Contrôleur).
+            \item Écriture de la fonction récursive de chaînage arrière (`verifier-but`) pour comparaison.
+            \item Génération des scénarios de tests unitaires (`test-edge-cases`).
+        \end{itemize}
+    \item \textbf{Vérification humaine} : Correction par l'étudiant de la logique des règles `R-A4` (valeurs ANB négatives pour la classe III) mal interprétées initialement par l'IA.
+\end{itemize}
+
+\section{Scénarios et Résultats}
+
+\subsection{Scénario Clinique : Classe II Division 1}
+**Entrées Utilisateur :**
+\begin{itemize}
+    \item Âge : 10 ans
+    \item Relation Molaire : Classe 2
+    \item Incisives Maxillaires : Proclinées
+    \item Overjet : 6mm
+    \item Coopération : Bonne
+\end{itemize}
+
+**Traces d'exécution :**
+\begin{verbatim}
+--- Cycle 1 ---
+DÉCLENCHEMENT RÈGLE R-A2 : Classe II division 1 classique
+[INFO] Nouveau fait établi : DIAGNOSTIC = CLASSE-2-DIV-1 (:deduit)
+
+--- Cycle 2 ---
+DÉCLENCHEMENT RÈGLE R-B1 : Twin Block ou Activateur
+[INFO] Nouveau fait établi : APPAREIL = FONCTIONNEL (:deduit)
+\end{verbatim}
+
+**Résultat :** Le système recommande correctement un appareil fonctionnel, cohérent avec la littérature pour un patient en croissance \parencite{koretsi2015}.
+
+\subsection{Tests de Robustesse}
+Le système a été soumis à des tests limites (fonction `test-edge-cases` dans le code) :
+\begin{itemize}
+    \item Gestion des âges limites (passage enfant/ado/adulte).
+    \item Données manquantes (le système répond "Diagnostic indéterminé" sans planter).
+    \item Boucles infinies évitées par le flag `active` dans la structure `regle`.
+\end{itemize}
+
+\section{Conclusion et Perspectives}
+
+Le système expert développé répond au cahier des charges d'un SE d'ordre 0+. Il permet de valider la logique diagnostique en orthodontie sur des cas standards.
+
+\textbf{Limites :}
+\begin{itemize}
+    \item Rigidité des seuils (un overjet de 5.1mm déclenche la règle, 4.9mm non).
+    \item Pas de gestion de l'incertitude (logique floue nécessaire pour les cas "borderline").
+\end{itemize}
+
+\textbf{Améliorations futures :}
+\begin{itemize}
+    \item Implémentation d'un SE d'ordre 1 (avec variables) pour généraliser les règles dentaires (gauche/droite).
+    \item Interface graphique pour la saisie des données céphalométriques.
+\end{itemize}
+
+\printbibliography
+
+\end{document}

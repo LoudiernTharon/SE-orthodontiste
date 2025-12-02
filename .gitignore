@@ -1,0 +1,10 @@
+*.aux
+*.log
+*.out
+*.aux
+*.nav
+*.snm
+*.toc
+*.vrb
+*.bcf
+*.run.xml

@@ -53,7 +53,7 @@
     \small TP02 - Intelligence Artificielle Symbolique
 }
 \author{Loudiern Tharon \and Lou Aubert-Debrue}
-\date{Janvier 2026}
+\date{\today}
 
 \begin{document}
 
@@ -61,14 +61,14 @@
 \tableofcontents
 \newpage
 
-\section{Introduction}
+\chapter{Introduction}
 
-\subsection{Contexte et Problématique}
+\section{Contexte et Problématique}
 L'Orthopédie Dento-Faciale (ODF), communément appelée orthodontie, est une discipline complexe nécessitant l'intégration de multiples paramètres cliniques (squelettiques, dentaires, esthétiques) pour établir un diagnostic et un plan de traitement. 
 
 La problématique traitée dans ce projet est la création d'un système d'aide à la décision pour la \textbf{sélection du type d'appareil orthodontique} chez l'enfant et l'adulte. Face à la multitude de dispositifs existants (fonctionnels, fixes, aligneurs, etc.), le risque d'erreur de diagnostic ou de mauvaise indication thérapeutique est réel pour un praticien débutant.
 
-\subsection{Justification du Système Expert d'Ordre 0+}
+\section{Justification du Système Expert d'Ordre 0+}
 Le choix d'un système expert d'ordre 0+ (logique propositionnelle étendue aux prédicats simples, sans gestion d'incertitude probabiliste type Bayes) se justifie par la nature des classifications orthodontiques :
 \begin{itemize}
     \item \textbf{Déterminisme des classifications :} Les classes d'Angle (I, II, III) sont définies par des critères géométriques stricts \parencite{angle1899}.
@@ -78,9 +78,9 @@ Le choix d'un système expert d'ordre 0+ (logique propositionnelle étendue aux 
 
 Ce système permet donc de formaliser le raisonnement clinique de manière explicite et vérifiable.
 
-\section{Base de Connaissances}
+\chapter{Base de Connaissances}
 
-\subsection{Formalisation des Règles}
+\section{Formalisation des Règles}
 La base de connaissances a été construite à partir d'une analyse bibliographique rigoureuse. Elle est divisée en trois modules : Diagnostic, Appareillage, et Contre-indications.
 
 Voici quelques exemples de règles formalisées (SI ... ALORS ...) :
@@ -99,7 +99,7 @@ Voici quelques exemples de règles formalisées (SI ... ALORS ...) :
     ALORS \textit{Traitement} = Contre-indiqué \parencite{proffit2018}.
 \end{itemize}
 
-\subsection{Arbre de Déduction (Simplifié)}
+\section{Arbre de Déduction (Simplifié)}
 Le raisonnement suit une logique en cascade :
 \begin{enumerate}
     \item \textbf{Niveau 1 (Squelettique/Dentaire)} : Analyse des mesures céphalométriques (ANB, Wits) et cliniques $\rightarrow$ \textit{Diagnostic}.
@@ -107,9 +107,9 @@ Le raisonnement suit une logique en cascade :
     \item \textbf{Niveau 3 (Sécurité)} : Vérification des limites (Parodonte, limites techniques) $\rightarrow$ \textit{Contre-indications} ou \textit{Accessoires}.
 \end{enumerate}
 
-\section{Implémentation en Common Lisp}
+\chapter{Implémentation en Common Lisp}
 
-\subsection{Représentation des Connaissances}
+\section{Représentation des Connaissances}
 Nous avons opté pour l'utilisation de structures (`defstruct`) pour représenter les faits et les règles, offrant une meilleure lisibilité que les listes simples.
 
 \begin{lstlisting}[caption=Structure des données en Lisp]
@@ -127,7 +127,7 @@ Nous avons opté pour l'utilisation de structures (`defstruct`) pour représente
 )
 \end{lstlisting}
 
-\subsection{Moteur d'Inférence : Chaînage Avant}
+\section{Moteur d'Inférence : Chaînage Avant}
 Le choix s'est porté sur un moteur en **chaînage avant** (dirigé par les données). En diagnostic médical, nous partons des symptômes (faits observés) pour en déduire une pathologie (nouveaux faits). 
 
 Le moteur fonctionne par saturation de la base de faits (`*base-faits*`).
@@ -146,7 +146,7 @@ Le moteur fonctionne par saturation de la base de faits (`*base-faits*`).
 
 Une particularité de notre implémentation est la fonction `evaluer-condition` qui gère des opérateurs de comparaison complexes (`>`, `<`, `member`, `equal`), dépassant le simple ordre 0 binaire.
 
-\subsection{Fonctions de Service}
+\section{Fonctions de Service}
 Le système inclut des fonctions robustes pour :
 \begin{itemize}
     \item `ajouter-fait` : Vérifie l'unicité avant l'insertion.
@@ -154,11 +154,11 @@ Le système inclut des fonctions robustes pour :
     \item `reinitialiser-base` : Vide la mémoire de travail pour un nouveau patient.
 \end{itemize}
 
-\section{Utilisation de l'IA Générative}
+\chapter{Utilisation de l'IA Générative}
 
 Conformément aux consignes, l'IA (modèle Gemini) a été utilisée comme "Technicien Lisp" tandis que l'étudiant a agi comme "Expert Orthodontiste".
 
-\subsection{Documentation des Prompts}
+\section{Documentation des Prompts}
 \begin{itemize}
     \item \textbf{Prompt initial} : Définition du rôle et contrainte "Attends ma base de règles".
     \item \textbf{Apport de l'IA} : 
@@ -170,9 +170,9 @@ Conformément aux consignes, l'IA (modèle Gemini) a été utilisée comme "Tech
     \item \textbf{Vérification humaine} : Correction par l'étudiant de la logique des règles `R-A4` (valeurs ANB négatives pour la classe III) mal interprétées initialement par l'IA.
 \end{itemize}
 
-\section{Scénarios et Résultats}
+\chapter{Scénarios et Résultats}
 
-\subsection{Scénario Clinique : Classe II Division 1}
+\section{Scénario Clinique : Classe II Division 1}
 **Entrées Utilisateur :**
 \begin{itemize}
     \item Âge : 10 ans
@@ -195,7 +195,7 @@ DÉCLENCHEMENT RÈGLE R-B1 : Twin Block ou Activateur
 
 **Résultat :** Le système recommande correctement un appareil fonctionnel, cohérent avec la littérature pour un patient en croissance \parencite{koretsi2015}.
 
-\subsection{Tests de Robustesse}
+\section{Tests de Robustesse}
 Le système a été soumis à des tests limites (fonction `test-edge-cases` dans le code) :
 \begin{itemize}
     \item Gestion des âges limites (passage enfant/ado/adulte).
@@ -203,11 +203,11 @@ Le système a été soumis à des tests limites (fonction `test-edge-cases` dans
     \item Boucles infinies évitées par le flag `active` dans la structure `regle`.
 \end{itemize}
 
-\section{Glossaire Technique}
+\chapter{Glossaire Technique}
 
 Ce glossaire explicite les termes essentiels à la compréhension du système expert orthodontique développé. Il couvre trois domaines : l'orthodontie clinique, l'intelligence artificielle symbolique, et l'implémentation en Common Lisp.
 
-\subsection{Termes d'Orthodontie}
+\section{Termes d'Orthodontie}
 
 \begin{description}
     \item[Classes d'Angle (I, II, III)] Classification squeletto-dentaire fondamentale basée sur la relation entre la première molaire maxillaire et mandibulaire. \textbf{Classe I} : relation normale (neutre). \textbf{Classe II} : molaire mandibulaire reculée (rétrognathe). \textbf{Classe III} : molaire mandibulaire avancée (prognathe). Permet d'orienter le diagnostic (Règles R-A1 à R-A5, lignes 59-88 du code Lisp).
@@ -216,7 +216,7 @@ Ce glossaire explicite les termes essentiels à la compréhension du système ex
     
     \item[Overbite] Distance verticale de recouvrement des incisives supérieures sur les inférieures. Un overbite $>4$mm associé à des incisives rétroclinées caractérise une Classe II Division 2 avec "Deep Bite" (Règle R-A3, ligne 73). Indique un risque de traumatisme palatin.
     
-    \item[ANB (Angle Nasal-Basion)] Mesure céphalométrique fondamentale calculée sur une téléradiographie de profil. Angle formé par les points A (base du maxillaire), N (nasion) et B (base de la mandibule). \textbf{Valeur normale} : 2° à 4°. ANB $>4°$ = Classe II squelettique. ANB $<0°$ = Classe III squelettique (Règle R-A4, ligne 79, condition \texttt{(anb < 0)}). Permet de différencier les malocclusions dentaires des malocclusions squelettiques.
+    \item[ANB (Angle Nasal-Basion)] Mesure céphalométrique fondamentale calculée sur une téléradiographie de profil. Angle formé par les points A (base du maxillaire), N (nasion) et B (base de la mandibule). \textbf{Valeur normale} : $2^\circ$ à $4^\circ$. ANB $>4^\circ$ = Classe II squelettique. ANB $<0^\circ$ = Classe III squelettique (Règle R-A4, ligne 79, condition \texttt{(anb < 0)}). Permet de différencier les malocclusions dentaires des malocclusions squelettiques.
     
     \item[Wits (Appraisal)] Alternative au ANB pour évaluer les décalages squelettiques. Mesure la projection des points A et B sur le plan occlusal. Valeur normale homme : $-1$mm, femme : $0$mm. Un Wits $<-2$mm confirme une Classe III squelettique "vraie" (Règle R-A4, ligne 79, condition \texttt{(wits < -2)}). Plus fiable que l'ANB chez les patients à croissance verticale.
     
@@ -231,7 +231,7 @@ Ce glossaire explicite les termes essentiels à la compréhension du système ex
     \item[Contention] Phase de maintien des résultats orthodontiques après dépose des appareils actifs. \textbf{Contention fixe} : fil métallique collé sur la face linguale des dents (canine à canine), indiquée si antécédent d'encombrement (Règle R-B7, ligne 143). \textbf{Contention amovible} : gouttière thermoformée portée la nuit (Règle R-B8, ligne 149). Durée minimale : 2 ans, idéalement à vie.
 \end{description}
 
-\subsection{Concepts d'Intelligence Artificielle Symbolique}
+\section{Concepts d'Intelligence Artificielle Symbolique}
 
 \begin{description}
     \item[Système Expert d'Ordre 0+] Système à base de connaissances utilisant la logique propositionnelle étendue. \textbf{Ordre 0} : pas de variables ni de quantificateurs (contrairement à la logique du premier ordre). Le "$+$" indique l'usage de prédicats simples ($>, <, =$) et d'opérateurs ensemblistes (\texttt{member}), dépassant la logique booléenne pure. Adapté aux domaines avec classifications déterministes comme l'orthodontie.
@@ -253,7 +253,7 @@ Ce glossaire explicite les termes essentiels à la compréhension du système ex
     \item[Évaluation de Conditions] Fonction \texttt{evaluer-condition()} (lignes 183-197) qui vérifie si une condition est satisfaite. Gère 6 opérateurs : \texttt{equal} (égalité symbolique), \texttt{>}, \texttt{<}, \texttt{>=}, \texttt{<=} (comparaisons numériques), \texttt{member} (appartenance à une liste). Retourne \texttt{:inconnu} si l'attribut n'est pas dans la base, permettant de distinguer "faux" de "non encore évalué".
 \end{description}
 
-\subsection{Structures de Données et Implémentation Lisp}
+\section{Structures de Données et Implémentation Lisp}
 
 \begin{description}
     \item[Structure \texttt{defstruct}] Macro Common Lisp créant un type de données structuré avec accesseurs automatiques. Utilisée pour \texttt{fait} (ligne 6) et \texttt{regle} (ligne 12). Avantages sur les listes simples : clarté sémantique, typage, performances d'accès (O(1) vs parcours). Génère automatiquement des fonctions \texttt{make-fait}, \texttt{fait-attribut}, \texttt{fait-valeur}, \texttt{regle-premisses}, etc.
@@ -277,7 +277,7 @@ Ce glossaire explicite les termes essentiels à la compréhension du système ex
     \item[Facteur de Confiance (CF)] Attribut \texttt{:cf} dans \texttt{defstruct regle} (ligne 17). Valeur entre 0 et 1 représentant la certitude de la règle selon la littérature scientifique. Exemples : R-A2 (CF=0.90, ligne 68), R-B3 (CF=0.85, ligne 122). \textbf{Usage actuel} : purement informatif (affiché dans la description), non exploité pour l'inférence. \textbf{Extension possible} : calcul de certitudes propagées (modèle MYCIN avec formules de Shortliffe).
 \end{description}
 
-\section{Conclusion et Perspectives}
+\chapter{Conclusion et Perspectives}
 
 Le système expert développé répond au cahier des charges d'un SE d'ordre 0+. Il permet de valider la logique diagnostique en orthodontie sur des cas standards.
 

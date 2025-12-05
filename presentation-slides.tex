@@ -145,6 +145,43 @@
   \end{itemize}
 \end{frame}
 
+\section{Glossaire}
+\begin{frame}{Glossaire Technique - Orthodontie}
+  \begin{description}
+      \item[Classes d'Angle] Classification squeletto-dentaire fondamentale. Classe I (normal), II (rétrognathe), III (prognathe). Base du diagnostic (Règles R-A1 à R-A5).
+      
+      \item[ANB] Angle céphalométrique (points A-N-B). Normal : 2-4°. ANB $<0°$ = Classe III squelettique (Règle R-A4).
+      
+      \item[Overjet] Distance horizontale incisives sup./inf. Normal : 2-3mm. Overjet $>5$mm = Classe II Div 1 (R-A2).
+      
+      \item[Masque de Delaire] Traction faciale pour Classe III jeune (6-9 ans). Stimule la croissance maxillaire (R-B3).
+  \end{description}
+\end{frame}
+
+\begin{frame}{Glossaire Technique - IA Symbolique}
+  \begin{description}
+      \item[Système Expert Ordre 0+] Logique propositionnelle + prédicats ($>, <, =$). Pas de variables ni quantificateurs.
+      
+      \item[Chaînage Avant] Inférence dirigée par les \textbf{données}. Part des symptômes vers le diagnostic. Implémenté dans \texttt{chainage-avant()} (ligne 200).
+      
+      \item[Saturation] Application itérative des règles jusqu'à absence de nouveaux faits. Garantie de terminaison via flag \texttt{active}.
+      
+      \item[Base de Faits] Mémoire de travail dynamique (\texttt{*base-faits*}). Contient les connaissances avérées sur le patient.
+  \end{description}
+\end{frame}
+
+\begin{frame}{Glossaire Technique - Implémentation Lisp}
+  \begin{description}
+      \item[defstruct] Création de types structurés. \texttt{fait} (attribut/valeur/source) et \texttt{regle} (prémisses/conclusions). Génère accesseurs automatiques.
+      
+      \item[evaluer-condition] Fonction vérifiant si une condition est vraie (ligne 183). Gère 6 opérateurs : \texttt{equal}, $>$, $<$, $\ge$, $\le$, \texttt{member}.
+      
+      \item[Flag active] Attribut booléen dans \texttt{regle}. Désactivé après déclenchement pour éviter boucles infinies (ligne 223).
+      
+      \item[Tests Unitaires] Fonctions automatisées : \texttt{test-edge-cases}, \texttt{test-integration-complet}. Score de réussite calculé.
+  \end{description}
+\end{frame}
+
 \section{Conclusion}
 \begin{frame}{Conclusion et Perspectives}
   \textbf{Bilan :}

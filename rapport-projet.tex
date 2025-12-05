@@ -203,6 +203,80 @@ Le système a été soumis à des tests limites (fonction `test-edge-cases` dans
     \item Boucles infinies évitées par le flag `active` dans la structure `regle`.
 \end{itemize}
 
+\section{Glossaire Technique}
+
+Ce glossaire explicite les termes essentiels à la compréhension du système expert orthodontique développé. Il couvre trois domaines : l'orthodontie clinique, l'intelligence artificielle symbolique, et l'implémentation en Common Lisp.
+
+\subsection{Termes d'Orthodontie}
+
+\begin{description}
+    \item[Classes d'Angle (I, II, III)] Classification squeletto-dentaire fondamentale basée sur la relation entre la première molaire maxillaire et mandibulaire. \textbf{Classe I} : relation normale (neutre). \textbf{Classe II} : molaire mandibulaire reculée (rétrognathe). \textbf{Classe III} : molaire mandibulaire avancée (prognathe). Permet d'orienter le diagnostic (Règles R-A1 à R-A5, lignes 59-88 du code Lisp).
+    
+    \item[Overjet] Distance horizontale entre le bord des incisives supérieures et inférieures, mesurée en millimètres. Valeur normale : 2-3mm. Un overjet $>5$mm indique une Classe II Division 1 (Règle R-A2, ligne 67). Utilisé comme critère diagnostique pour différencier les subdivisions de Classe II.
+    
+    \item[Overbite] Distance verticale de recouvrement des incisives supérieures sur les inférieures. Un overbite $>4$mm associé à des incisives rétroclinées caractérise une Classe II Division 2 avec "Deep Bite" (Règle R-A3, ligne 73). Indique un risque de traumatisme palatin.
+    
+    \item[ANB (Angle Nasal-Basion)] Mesure céphalométrique fondamentale calculée sur une téléradiographie de profil. Angle formé par les points A (base du maxillaire), N (nasion) et B (base de la mandibule). \textbf{Valeur normale} : 2° à 4°. ANB $>4°$ = Classe II squelettique. ANB $<0°$ = Classe III squelettique (Règle R-A4, ligne 79, condition \texttt{(anb < 0)}). Permet de différencier les malocclusions dentaires des malocclusions squelettiques.
+    
+    \item[Wits (Appraisal)] Alternative au ANB pour évaluer les décalages squelettiques. Mesure la projection des points A et B sur le plan occlusal. Valeur normale homme : $-1$mm, femme : $0$mm. Un Wits $<-2$mm confirme une Classe III squelettique "vraie" (Règle R-A4, ligne 79, condition \texttt{(wits < -2)}). Plus fiable que l'ANB chez les patients à croissance verticale.
+    
+    \item[Rétromaxillie] Insuffisance de développement du maxillaire supérieur (os de la mâchoire supérieure). Pathognomonique de la Classe III squelettique. Justifie l'usage d'un masque de traction faciale (Delaire) pour stimuler la croissance maxillaire avant 9 ans (Règle R-B3, ligne 117, condition \texttt{(retromaxillie equal t)}).
+    
+    \item[Encombrement dentaire] Manque de place disponible sur l'arcade pour aligner toutes les dents. Mesuré en millimètres (somme des discordances de chaque dent). Encombrement $\le 4$mm = mineur (alignement possible par stripping). Encombrement $>6$mm = extraction nécessaire. Utilisé pour différencier une Classe I mineure (R-A1, ligne 59) d'une Classe I sévère.
+    
+    \item[Disjoncteur (Expansion Rapide du Maxillaire)] Appareil orthopédique fixé au palais pour élargir transversalement l'arcade maxillaire (ouverture de la suture médio-palatine). Indiqué chez l'enfant $<14$ ans en cas d'arcade étroite avec béance latérale (Règle R-B5, ligne 131). Impossible chez l'adulte (suture soudée).
+    
+    \item[Masque de Delaire (Traction Extraorale Inversée)] Appareil de traction faciale antérieure fixé sur un casque frontal et mentonnier. Stimule la croissance du maxillaire vers l'avant. Strictement réservé aux Classe III squelettiques jeunes (6-9 ans) avec rétromaxillie confirmée radiologiquement (Règle R-B3, ligne 117). Efficacité controversée après 10 ans.
+    
+    \item[Contention] Phase de maintien des résultats orthodontiques après dépose des appareils actifs. \textbf{Contention fixe} : fil métallique collé sur la face linguale des dents (canine à canine), indiquée si antécédent d'encombrement (Règle R-B7, ligne 143). \textbf{Contention amovible} : gouttière thermoformée portée la nuit (Règle R-B8, ligne 149). Durée minimale : 2 ans, idéalement à vie.
+\end{description}
+
+\subsection{Concepts d'Intelligence Artificielle Symbolique}
+
+\begin{description}
+    \item[Système Expert d'Ordre 0+] Système à base de connaissances utilisant la logique propositionnelle étendue. \textbf{Ordre 0} : pas de variables ni de quantificateurs (contrairement à la logique du premier ordre). Le "$+$" indique l'usage de prédicats simples ($>, <, =$) et d'opérateurs ensemblistes (\texttt{member}), dépassant la logique booléenne pure. Adapté aux domaines avec classifications déterministes comme l'orthodontie.
+    
+    \item[Base de Faits (Working Memory)] Ensemble dynamique des connaissances avérées à un instant $t$ sur le patient. Représentée par la variable globale \texttt{*base-faits*} (ligne 24). Chaque fait est une structure \texttt{(attribut valeur source)} (lignes 6-10). Exemple : \texttt{(age 10 :utilisateur)}. Évolue par saturation lors de l'exécution du moteur.
+    
+    \item[Base de Règles (Production Rules)] Ensemble statique des connaissances expertes formalisées sous forme SI...ALORS. Représentée par \texttt{*base-regles*} (ligne 27). Chargée une seule fois au démarrage via \texttt{charger-regles()} (ligne 50). Chaque règle possède un identifiant unique (ex: R-A2), des prémisses (conditions) et des conclusions (nouveaux faits déduits).
+    
+    \item[Chaînage Avant (Forward Chaining)] Stratégie d'inférence dirigée par les \textbf{données}. Part des faits connus (symptômes) pour déduire de nouveaux faits (diagnostic, traitement) par application itérative des règles. Implémenté dans la fonction \texttt{chainage-avant()} (lignes 200-226). \textbf{Justification du choix} : Mimétisme du raisonnement clinique médical (des signes vers la pathologie). Opposé au chaînage arrière (dirigé par les buts).
+    
+    \item[Chaînage Arrière (Backward Chaining)] Stratégie alternative dirigée par les \textbf{buts}. Part d'une hypothèse à prouver (ex: "Le patient a-t-il une Classe II ?") et remonte vers les faits nécessaires. Implémenté à titre comparatif dans \texttt{verifier-but()} (lignes 229-248). \textbf{Non utilisé en production} car moins intuitif pour l'interaction médecin-patient (qui fournit spontanément des symptômes, pas des hypothèses).
+    
+    \item[Saturation de la Base de Faits] Processus itératif du chaînage avant consistant à appliquer toutes les règles activables jusqu'à ce qu'aucun nouveau fait ne soit déduit. Détecté par le drapeau \texttt{nouveau-fait-trouve} (ligne 202). \textbf{Garantie de terminaison} : chaque règle est désactivée après déclenchement via \texttt{(active nil)} (ligne 223), empêchant les boucles infinies. Nombre de cycles moyen : 2-3 pour un diagnostic simple.
+    
+    \item[Règle de Production (Production Rule)] Formalisme de connaissance SI (prémisses) ALORS (conclusions). Structure Lisp \texttt{defstruct regle} (lignes 12-20). \textbf{Prémisses} : liste de conditions \texttt{((attribut operateur valeur)...)}. \textbf{Conclusions} : liste de nouveaux faits \texttt{((attribut valeur)...)}. \textbf{Facteur de confiance (CF)} : informatif uniquement (pas d'inférence bayésienne). Exemple : \texttt{R-A2} (ligne 64) encode "SI relation-molaire=Classe-2 ET incisives-max=proclinées ET overjet>5 ALORS diagnostic=Classe-2-Div-1 (CF=0.90)".
+    
+    \item[Gestion des Conflits (Conflict Resolution)] Mécanisme pour choisir quelle règle déclencher lorsque plusieurs sont activables simultanément. Notre système utilise un ordre de priorité \textbf{implicite basé sur l'ordre de définition des règles} (ordre de la liste \texttt{*base-regles*}, ligne 166 \texttt{nreverse}). Les règles diagnostiques (module A) sont chargées avant les règles thérapeutiques (module B), garantissant qu'un diagnostic soit établi avant la sélection d'un appareil.
+    
+    \item[Évaluation de Conditions] Fonction \texttt{evaluer-condition()} (lignes 183-197) qui vérifie si une condition est satisfaite. Gère 6 opérateurs : \texttt{equal} (égalité symbolique), \texttt{>}, \texttt{<}, \texttt{>=}, \texttt{<=} (comparaisons numériques), \texttt{member} (appartenance à une liste). Retourne \texttt{:inconnu} si l'attribut n'est pas dans la base, permettant de distinguer "faux" de "non encore évalué".
+\end{description}
+
+\subsection{Structures de Données et Implémentation Lisp}
+
+\begin{description}
+    \item[Structure \texttt{defstruct}] Macro Common Lisp créant un type de données structuré avec accesseurs automatiques. Utilisée pour \texttt{fait} (ligne 6) et \texttt{regle} (ligne 12). Avantages sur les listes simples : clarté sémantique, typage, performances d'accès (O(1) vs parcours). Génère automatiquement des fonctions \texttt{make-fait}, \texttt{fait-attribut}, \texttt{fait-valeur}, \texttt{regle-premisses}, etc.
+    
+    \item[Fonction \texttt{valeur-fait}] Recherche si un attribut existe dans \texttt{*base-faits*} (ligne 32). Utilise \texttt{find} avec \texttt{:key \#'fait-attribut} pour comparer uniquement les attributs. Retourne le \textbf{fait complet} (structure) si trouvé, \texttt{nil} sinon. \textbf{Correction effectuée} : version initiale était récursive (risque de stack overflow), remplacée par une version itérative avec \texttt{find}.
+    
+    \item[Fonction \texttt{ajouter-fait}] Ajoute un nouveau fait à la base si l'attribut n'existe pas déjà (ligne 35). Utilise \texttt{push} pour insertion en tête (O(1)). Trace l'ajout via \texttt{format} pour débogage. \textbf{Paramètre source} : \texttt{:utilisateur} pour faits saisis, \texttt{:deduit} pour faits inférés (ligne 37). Permet de distinguer les données primaires des conclusions pour l'explicabilité.
+    
+    \item[Fonction \texttt{reinitialiser-base}] Vide la mémoire de travail et réactive toutes les règles (lignes 41-45). Utilise \texttt{setf} pour affecter \texttt{nil} à \texttt{*base-faits*} et restaure \texttt{(regle-active r) t} pour chaque règle. \textbf{Indispensable} entre deux consultations pour éviter la contamination des données entre patients. Appelée au début de chaque test unitaire.
+    
+    \item[Moteur d'Inférence \texttt{chainage-avant}] Boucle \texttt{loop while} (lignes 200-226) qui itère tant que \texttt{nouveau-fait-trouve} est vrai. À chaque cycle : parcourt toutes les règles actives, évalue leurs prémisses, déclenche celles dont toutes les conditions sont vraies, ajoute les conclusions, désactive la règle. \textbf{Complexité} : O(n × m) où n = nombre de règles, m = nombre de cycles (en pratique $<5$). Affiche les traces pour pédagogie ("\texttt{DÉCLENCHEMENT RÈGLE...}").
+    
+    \item[Gestion du Flag \texttt{active}] Attribut booléen dans \texttt{defstruct regle} (ligne 19, valeur par défaut \texttt{t}). Permet de \textbf{désactiver une règle après son déclenchement} (ligne 223 : \texttt{setf (regle-active r) nil}). \textbf{Rôle critique} : empêche qu'une règle soit appliquée plusieurs fois (ex: R-A2 ajouterait indéfiniment le même diagnostic). Alternative aux systèmes à "retraction" (RETE).
+    
+    \item[Tests Unitaires Automatisés] Fonctions de tests robustes (lignes 370-700) : \texttt{test-edge-cases} (cas limites d'âge, valeurs numériques), \texttt{test-scenarios-complexes} (contre-indications, options multiples), \texttt{test-performance-stabilite} (détection de boucles infinies, répétabilité). Utilisent des assertions implicites avec \texttt{format} pour afficher les réussites (OK) ou échecs (ERREUR). La fonction \texttt{test-integration-complet} (lignes 619-700) vérifie individuellement chaque règle avec un score de réussite.
+    
+    \item[Fonction \texttt{poser-questions-base}] Interface en mode texte pour la collecte des données initiales (lignes 251-268). Utilise \texttt{read} pour lire les entrées utilisateur. Ajoute chaque donnée comme fait avec source \texttt{:utilisateur}. \textbf{Limitation} : pas de validation des entrées (un utilisateur peut saisir \texttt{classe-4}, invalide). Amélioration possible : fonction de vérification de domaine.
+    
+    \item[Opérateur \texttt{member}] Opérateur spécial dans \texttt{evaluer-condition} (ligne 194) pour tester l'appartenance. Permet des règles avec conditions disjonctives. Exemple : Règle R-A6 (ligne 95) : \texttt{(diagnostic member (classe-2-squelettique classe-3-squelettique))} est vraie si le diagnostic est \textbf{soit} Classe II \textbf{soit} Classe III squelettique. Évite de dupliquer des règles quasi-identiques.
+    
+    \item[Facteur de Confiance (CF)] Attribut \texttt{:cf} dans \texttt{defstruct regle} (ligne 17). Valeur entre 0 et 1 représentant la certitude de la règle selon la littérature scientifique. Exemples : R-A2 (CF=0.90, ligne 68), R-B3 (CF=0.85, ligne 122). \textbf{Usage actuel} : purement informatif (affiché dans la description), non exploité pour l'inférence. \textbf{Extension possible} : calcul de certitudes propagées (modèle MYCIN avec formules de Shortliffe).
+\end{description}
+
 \section{Conclusion et Perspectives}
 
 Le système expert développé répond au cahier des charges d'un SE d'ordre 0+. Il permet de valider la logique diagnostique en orthodontie sur des cas standards.

@@ -1,109 +1,112 @@
-# Glossaire Technique - Système Expert Orthodontique
+<a id="readme-top"></a>
 
-## Résumé de l'implémentation
+<div align="center">
+  <h3 align="center">Système Expert Orthodontiste – Version Académique</h3>
+  <p align="center">
+    Système expert d’aide à la décision pour l’appareillage orthodontique – Projet universitaire
+    <br />
+    <a href="https://github.com/LoudiernTharon/SE-orthodontiste/tree/académique"><strong>Explorer les livrables »</strong></a>
+  </p>
+</div>
 
-Ce document résume l'ajout du glossaire technique au rapport et à la présentation du système expert orthodontique.
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table des matières</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">À propos du projet</a>
+      <ul>
+        <li><a href="#built-with">Technologies utilisées</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Mise en route</a>
+      <ul>
+        <li><a href="#prerequisites">Prérequis</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Utilisation</a></li>
+    <li><a href="#deliverables">Livrables</a></li>
+    <li><a href="#license">Licence</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
 
-### ✅ Modifications effectuées
+## À propos du projet
 
-#### 1. Rapport LaTeX (`rapport-projet.tex`)
-- **Ajout d'une section complète "Glossaire Technique"** (avant la conclusion)
-- **3 sous-sections thématiques** :
-  - Termes d'Orthodontie (10 termes)
-  - Concepts d'Intelligence Artificielle Symbolique (8 termes)
-  - Structures de Données et Implémentation Lisp (10 termes)
+Ce projet présente la réalisation d'un système expert d'ordre 0+ conçu pour assister les praticiens dans le choix d'appareillages orthodontiques. Il s'appuie sur une base de connaissances cliniques (classes d'Angle, mesures céphalométriques) pour déduire un diagnostic et proposer un traitement adapté.
 
-#### 2. Présentation Beamer (`presentation-slides.tex`)
-- **Ajout de 3 slides de glossaire** :
-  - Slide "Glossaire Technique - Orthodontie"
-  - Slide "Glossaire Technique - IA Symbolique"
-  - Slide "Glossaire Technique - Implémentation Lisp"
-- Format concis avec les termes les plus importants pour la présentation orale
+### Points clés :
+* **Formalisation** : Base de règles de production et arbre de déduction clinique.
+* **Moteur d'inférences** : Implémentation en Lisp supportant le chaînage avant et arrière.
+* **IA Générative** : Documentation de l'usage de Copilot et Gemini Pro dans le processus de développement.
 
-### 📋 Contenu du glossaire
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-#### Orthodontie (termes médicaux)
-- Classes d'Angle (I, II, III)
-- Overjet / Overbite
-- ANB / Wits
-- Rétromaxillie
-- Encombrement dentaire
-- Disjoncteur
-- Masque de Delaire
-- Contention
+### Technologies utilisées
 
-#### IA Symbolique (concepts théoriques)
-- Système Expert d'Ordre 0+
-- Base de Faits / Base de Règles
-- Chaînage Avant / Chaînage Arrière
-- Saturation
-- Règle de Production
-- Gestion des Conflits
-- Évaluation de Conditions
+* [![Lisp](https://img.shields.io/badge/Lisp-000000?style=for-the-badge&logo=commonlisp&logoColor=white)](https://common-lisp.net/)
+* [![LaTeX](https://img.shields.io/badge/LaTeX-47A141?style=for-the-badge&logo=latex&logoColor=white)](https://www.latex-project.org/)
 
-#### Implémentation Lisp (aspects techniques)
-- Structure `defstruct` (fait, regle)
-- Fonction `valeur-fait`
-- Fonction `ajouter-fait`
-- Fonction `reinitialiser-base`
-- Moteur d'Inférence `chainage-avant`
-- Gestion du Flag `active`
-- Tests Unitaires Automatisés
-- Fonction `poser-questions-base`
-- Opérateur `member`
-- Facteur de Confiance (CF)
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-### 🎯 Points forts du glossaire
+## Mise en route
 
-1. **Lien code-théorie** : Chaque terme renvoie aux lignes de code correspondantes
-2. **Pédagogie** : Explications accessibles à un étudiant en informatique sans background médical
-3. **Justifications** : Explication du "pourquoi" des choix techniques
-4. **Défendabilité** : Permet de répondre aux questions d'un jury mixte (info + santé)
+### Prérequis
+* Un interpréteur Common Lisp (ex: [SBCL](http://www.sbcl.org/))
+* Un environnement LaTeX pour compiler les sources du rapport.
 
-### ✅ Vérification de la compilation
+### Installation
+1. Clonez le dépôt sur la branche académique
+   ```sh
+   git clone -b académique https://github.com/LoudiernTharon/SE-orthodontiste.git
+   ```
+2. Chargez le système expert dans votre REPL Lisp
+   ```lisp
+   (load "code-source/expert-orthodontiste.lisp")
+   ```
 
-Les deux documents se compilent correctement :
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-```bash
-# Rapport (avec bibliographie)
-pdflatex rapport-projet.tex
-biber rapport-projet
-pdflatex rapport-projet.tex
-# ✓ Généré : rapport-projet.pdf (10 pages, 222 KB)
+## Utilisation
 
-# Présentation
-pdflatex presentation-slides.tex
-# ✓ Généré : presentation-slides.pdf (12 pages, 143 KB)
+Pour lancer une session de diagnostic :
+```lisp
+(reinitialiser-base)
+(lancer-expertise)
 ```
+Le système vous posera une série de questions sur les mesures cliniques du patient (ex: relation molaire, overjet, âge) avant de proposer une recommandation.
 
-**Warnings résiduels** : Uniquement des avertissements de mise en page (Overfull hbox) et symbole degré en mode math - **aucun impact sur le PDF final**.
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-### 📚 Exemples de définitions
+## Livrables
+- `rapport/rapport-projet.pdf` : Analyse théorique et justification des choix techniques.
+- `presentation/presentation-slides.pdf` : Support visuel utilisé lors de la soutenance.
+- `code-source/expert-orthodontiste.lisp` : Code source complet et commenté.
 
-**Exemple orthodontie** :
-> **ANB** : Mesure céphalométrique fondamentale calculée sur une téléradiographie de profil. Angle formé par les points A (base du maxillaire), N (nasion) et B (base de la mandibule). Valeur normale : 2° à 4°. ANB >4° = Classe II squelettique. ANB <0° = Classe III squelettique (Règle R-A4, ligne 79).
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-**Exemple IA** :
-> **Chaînage Avant** : Stratégie d'inférence dirigée par les données. Part des faits connus (symptômes) pour déduire de nouveaux faits (diagnostic, traitement). Implémenté dans `chainage-avant()` (lignes 200-226). Justification : mimétisme du raisonnement clinique médical.
+## Licence
 
-**Exemple Lisp** :
-> **Structure defstruct** : Macro Common Lisp créant un type de données structuré avec accesseurs automatiques. Génère `make-fait`, `fait-attribut`, `fait-valeur`, etc. Avantages : clarté sémantique, typage, performances O(1).
+Distribué sous licence MIT. Voir `LICENSE` pour plus d'informations.
 
-### 🎓 Usage pédagogique
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-Le glossaire permet de :
-- ✅ Comprendre chaque ligne de code
-- ✅ Expliquer les choix techniques
-- ✅ Défendre l'architecture du système
-- ✅ Présenter clairement à un jury mixte (informatique + santé)
+## Contact
 
-### 📁 Fichiers modifiés
+LoudiernTharon - [https://github.com/LoudiernTharon](https://github.com/LoudiernTharon)
 
-1. `rapport-projet.tex` - Section Glossaire ajoutée avant la conclusion
-2. `presentation-slides.tex` - 3 slides de glossaire ajoutées avant la conclusion
-3. Les deux PDFs se génèrent correctement sans erreurs
+Lien du projet: [https://github.com/LoudiernTharon/SE-orthodontiste](https://github.com/LoudiernTharon/SE-orthodontiste)
 
----
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-**Date de création** : 5 décembre 2025  
-**Auteur** : GitHub Copilot (exécution du prompt prompt-copilot.txt)
+Distribué sous licence MIT.
+
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
+
+## Contact
+
+Loudiern Tharon - loudiern.tharon@etu.utc.fr et Lou Aubert-Debrue - lou.aubert-debrue@etu.utc.fr Lien du projet: https://github.com/LoudiernTharon/SE-orthodontiste
+
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>

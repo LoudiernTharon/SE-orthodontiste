@@ -1,15 +1,8 @@
-\documentclass{report-UTC}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[french]{babel}
-\usepackage{geometry}
-\usepackage{graphicx}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage[hidelinks]{hyperref}
-\usepackage{csquotes}
-\usepackage[style=apa, backend=biber]{biblatex}
+\documentclass{utc-report}
 
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[backend=biber, style=numeric]{biblatex}
 \addbibresource{references.bib}
 
 \geometry{hmargin=2.5cm,vmargin=2.5cm}
@@ -47,17 +40,15 @@
     tabsize=2
 }
 
-\title{
-    \textbf{Conduite d'expertise d'un Système Expert d'Ordre 0+}\\
-    \large Aide à la décision en Orthopédie Dento-Faciale\\
-    \small TP02 - Intelligence Artificielle Symbolique
-}
-\author{Loudiern Tharon \and Lou Aubert-Debrue}
+\UV{AI02}
+\title{Conduite d'expertise d'un Système Expert d'Ordre 0+}
+\subtitle{Aide à la décision en Orthopédie Dento-Faciale}
+\author{Loudiern Tharon, Lou Aubert-Debrue}
 \date{\today}
 
 \begin{document}
 
-\maketitle
+\maketitlepage
 \tableofcontents
 \newpage
 

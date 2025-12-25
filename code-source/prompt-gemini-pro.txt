@@ -1,0 +1,151 @@
+Je vais réaliser un TP universitaire sur la création d'un système expert d'ordre 0+ en Lisp. 
+
+Je te fournirai d'abord la base de règles que j'ai établie pour le domaine de l'orthodontie (sélection d'appareil orthodontique).
+
+
+**CONTEXTE DU TP :**
+
+Domaine : Orthopédie dento-faciale (Orthodontie)
+
+Problématique : Système d'aide à la sélection du type d'appareil orthodontique adapté à un patient
+
+Type de SE : Ordre 0+ (pas d'incertitude, pas de gestion du temps)
+
+Langage : Common Lisp
+
+Délai : Projet étudiant à rendre sous 2 semaines
+
+
+**ATTENTION - MODE OPÉRATOIRE :**
+
+1. J'attends que je te fournisse d'abord MA base de règles avant que tu ne commences le développement
+
+2. Je vais te l'envoyer dans mon prochain message
+
+3. Tu dois m'attendre et ne pas générer de code avant d'avoir reçu cette base
+
+
+**OBJECTIFS À ATTEINDRE :**
+
+1. Formaliser le problème et justifier le choix du SE d'ordre 0+
+
+2. Déterminer et structurer les connaissances
+
+3. Programmer le SE complet en Lisp avec :
+
+   a. Représentation des faits et règles
+
+   b. Fonctions de service
+
+   c. Moteur d'inférences (comparer 2 moteurs si possible)
+
+   d. Tests et scénarios d'utilisation
+
+
+**DEMANDES SPÉCIFIQUES :**
+
+
+## 1. RECOMMANDATIONS PRÉALABLES :
+
+Avant que je ne te fournisse la base de règles, donne-moi des conseils sur :
+
+
+a) **Documentation et sources fiables** :
+
+   - Quelles sources médicales fiables consulter pour valider les règles orthodontiques ?
+
+   - Comment structurer la bibliographie pour un projet académique ?
+
+   - Quels critères d'évaluation des sources (PubMed, revues spécialisées, etc.) ?
+
+
+b) **Optimisation du moteur d'inférence** :
+
+   - Quels sont les avantages/inconvénients du chaînage avant vs arrière pour ce domaine ?
+
+   - Pourquoi choisir profondeur d'abord vs largeur d'abord ?
+
+   - Comment valider médicalement les inférences du système ?
+
+
+c) **Structuration du code Lisp** :
+
+   - Quelle représentation recommandes-tu pour les faits ? (listes, structures, objets)
+
+   - Comment organiser les fichiers pour la maintenabilité ?
+
+   - Quelles fonctions de base sont essentielles pour un SE en Lisp ?
+
+
+d) **Validation médicale** :
+
+   - Comment intégrer des garde-fous éthiques ?
+
+   - Quelle mention de non-responsabilité médicale inclure ?
+
+   - Comment gérer les cas limites ou contradictoires ?
+
+
+## 2. ATTENTES DE QUALITÉ :
+
+- Code bien commenté avec explications pédagogiques
+
+- Tests unitaires pour chaque fonction
+
+- Scénarios d'utilisation réalistes
+
+- Documentation académique rigoureuse
+
+- Respect des bonnes pratiques Lisp
+
+
+## 3. STRUCTURE SOUHAITÉE POUR LA RÉPONSE :
+
+Quand je t'enverrai la base de règles, fournis-moi :
+
+
+a) **Analyse critique** de ma base de règles
+
+b) **Proposition d'amélioration** si nécessaire
+
+c) **Plan de développement** étape par étape
+
+d) **Code Lisp complet** avec :
+
+   - Représentation des connaissances
+
+   - Moteur principal + moteur alternatif pour comparaison
+
+   - Fonctions d'interface utilisateur basique
+
+   - Jeux de tests exhaustifs
+
+
+e) **Documentation académique** incluant :
+
+   - Justification des choix techniques
+
+   - Limites du système
+
+   - Perspectives d'amélioration
+
+
+## 4. CONTRAINTES PÉDAGOGIQUES :
+
+- Niveau : Licence/Master informatique
+
+- Prérequis : Bases de Lisp, algorithmique
+
+- Volume : ~500-800 lignes de code
+
+- Rendus : Rapport + Code + Présentation
+
+
+**IMPORTANT :** 
+
+Je suis l'expert du domaine pour les règles orthodontiques, tu es l'expert technique en systèmes experts et Lisp.
+
+Nous allons collaborer : je fournis les connaissances métier, tu fournis l'expertise technique.
+
+
+Attends maintenant que je te fournisse ma base de règles dans le prochain message.

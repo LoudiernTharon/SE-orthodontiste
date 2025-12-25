@@ -2,6 +2,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
 \usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
 \usetheme{Madrid}
 \usecolortheme{whale}
 
@@ -65,6 +67,120 @@
     \textbf{ET} 8 $\le$ Âge $\le$ 12 ans \\
     \textbf{ET} Coopération = Bonne \\
     \textbf{ALORS} Appareil = Fonctionnel (Activateur)
+  \end{block}
+\end{frame}
+
+\begin{frame}{Arbre de Décision du Système Expert}
+  \begin{center}
+  \begin{tikzpicture}[
+    scale=0.65, transform shape,
+    node distance=0.8cm and 0.5cm,
+    input/.style={rectangle, rounded corners, draw=blue!70, fill=blue!15, text width=2cm, align=center, font=\scriptsize\bfseries, minimum height=0.6cm},
+    diag/.style={rectangle, draw=orange!70, fill=orange!20, text width=2.2cm, align=center, font=\scriptsize\bfseries, minimum height=0.6cm},
+    app/.style={rectangle, draw=green!70, fill=green!20, text width=2cm, align=center, font=\scriptsize\bfseries, minimum height=0.6cm},
+    ci/.style={rectangle, draw=red!70, fill=red!20, text width=2cm, align=center, font=\scriptsize\bfseries, minimum height=0.6cm},
+    arrow/.style={-{Stealth[scale=0.8]}, thick}
+  ]
+    % Niveau 0 : Entrées utilisateur
+    \node[input] (age) {Âge};
+    \node[input, right=of age] (mol) {Relation\\Molaire};
+    \node[input, right=of mol] (anb) {ANB/Wits};
+    \node[input, right=of anb] (ov) {Overjet\\Overbite};
+    \node[input, right=of ov] (inc) {Incisives};
+    \node[input, right=of inc] (coop) {Coopération};
+    
+    % Niveau 1 : Diagnostics (Module A)
+    \node[diag, below=1.2cm of mol] (cl1) {Classe I\\Mineure};
+    \node[diag, right=0.4cm of cl1] (cl2d1) {Classe II\\Div 1};
+    \node[diag, right=0.4cm of cl2d1] (cl2d2) {Classe II\\Div 2};
+    \node[diag, right=0.4cm of cl2d2] (cl3) {Classe III\\Squel.};
+    
+    % Niveau 2 : Appareils (Module B)
+    \node[app, below=1.2cm of cl1] (align) {Aligneurs};
+    \node[app, right=0.4cm of align] (fonc) {Fonctionnel};
+    \node[app, right=0.4cm of fonc] (hg) {Headgear};
+    \node[app, right=0.4cm of hg] (masque) {Masque\\Delaire};
+    
+    % Niveau 3 : CI/Chirurgie (Module C)
+    \node[ci, below=1.2cm of fonc] (ci) {Contre-\\Indiqué};
+    \node[ci, right=1cm of ci] (chir) {Chirurgie};
+    
+    % Flèches
+    \draw[arrow, blue!60] (mol) -- (cl1);
+    \draw[arrow, blue!60] (mol) -- (cl2d1);
+    \draw[arrow, blue!60] (anb) -- (cl3);
+    \draw[arrow, blue!60] (ov) -- (cl2d1);
+    \draw[arrow, blue!60] (inc) -- (cl2d2);
+    
+    \draw[arrow, orange!60] (cl1) -- (align);
+    \draw[arrow, orange!60] (cl2d1) -- (fonc);
+    \draw[arrow, orange!60] (cl2d1) -- (hg);
+    \draw[arrow, orange!60] (cl3) -- (masque);
+    
+    \draw[arrow, red!60] (cl3) -- (chir);
+    
+    % Labels des modules
+    \node[left=0.3cm of age, font=\tiny\itshape, text=blue!70] {ENTRÉES};
+    \node[left=0.3cm of cl1, font=\tiny\itshape, text=orange!70] {MODULE A};
+    \node[left=0.3cm of align, font=\tiny\itshape, text=green!70] {MODULE B};
+    \node[left=0.3cm of ci, font=\tiny\itshape, text=red!70] {MODULE C};
+  \end{tikzpicture}
+  \end{center}
+  
+  \vspace{-0.3cm}
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+    \footnotesize
+    \textcolor{blue!70}{\textbf{Entrées :}} Données patient (utilisateur)\\
+    \textcolor{orange!70}{\textbf{Module A :}} Règles diagnostiques
+    
+    \column{0.5\textwidth}
+    \footnotesize
+    \textcolor{green!70}{\textbf{Module B :}} Choix appareillage\\
+    \textcolor{red!70}{\textbf{Module C :}} Contre-indications
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Code : Structure des Règles (Module A)}
+  \textbf{Exemple R-A2 : Diagnostic Classe II Division 1}
+  \begin{lstlisting}[language=Lisp]
+(push (make-regle 
+       :id 'R-A2 
+       :premisses '((relation-molaire equal classe-2)
+                    (incisives-max equal proclinees)
+                    (overjet > 5))
+       :conclusions '((diagnostic classe-2-div-1))
+       :cf 0.90 
+       :description "Classe II division 1") 
+      *base-regles*)
+  \end{lstlisting}
+  
+  \begin{alertblock}{Format des prémisses}
+    \texttt{(attribut operateur valeur)} $\to$ Triplet Ordre 0+\\
+    Opérateurs : \texttt{equal}, \texttt{>}, \texttt{<}, \texttt{>=}, \texttt{<=}, \texttt{member}
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Code : Évaluation des Conditions}
+  \textbf{Fonction clé : \texttt{evaluer-condition}}
+  \begin{lstlisting}[language=Lisp]
+(defun evaluer-condition (condition)
+  (let* ((attr (first condition))
+         (op   (second condition))
+         (val-ref (third condition))
+         (fait-trouve (valeur-fait attr)))
+    (if (null fait-trouve)
+        :inconnu  ;; Fait non renseigne
+        (case op
+          (equal  (equal val-reelle val-ref))
+          (>      (> val-reelle val-ref))
+          (<      (< val-reelle val-ref))
+          (member (member val-reelle val-ref))))))
+  \end{lstlisting}
+  
+  \begin{block}{Justification Ordre 0+}
+    $\bullet$ 6 opérateurs de comparaison (au-delà du booléen pur)\\
+    $\bullet$ Retour \texttt{:inconnu} $\neq$ \texttt{nil} (distinction faux/non-renseigné)
   \end{block}
 \end{frame}
 

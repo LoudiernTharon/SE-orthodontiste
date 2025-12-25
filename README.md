@@ -95,18 +95,10 @@ Distribué sous licence MIT. Voir `LICENSE` pour plus d'informations.
 
 ## Contact
 
-LoudiernTharon - [https://github.com/LoudiernTharon](https://github.com/LoudiernTharon)
+**Loudiern Tharon** - loudiern.tharon@etu.utc.fr
 
-Lien du projet: [https://github.com/LoudiernTharon/SE-orthodontiste](https://github.com/LoudiernTharon/SE-orthodontiste)
+**Lou Aubert-Debrue** - lou.aubert-debrue@etu.utc.fr 
 
-<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
-
-Distribué sous licence MIT.
-
-<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
-
-## Contact
-
-Loudiern Tharon - loudiern.tharon@etu.utc.fr et Lou Aubert-Debrue - lou.aubert-debrue@etu.utc.fr Lien du projet: https://github.com/LoudiernTharon/SE-orthodontiste
+**Lien du projet** - https://github.com/LoudiernTharon/SE-orthodontiste
 
 <p align="right">(<a href="#readme-top">retour en haut</a>)</p>
